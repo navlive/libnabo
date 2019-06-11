@@ -231,7 +231,7 @@ configure_file(libnaboConfigVersion.cmake.in
 install(FILES
 	"${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/libnaboConfig.cmake"
 	"${PROJECT_BINARY_DIR}/libnaboConfigVersion.cmake"
-	DESTINATION share/libnabo/cmake COMPONENT dev)
+	DESTINATION share/libnabo/cmake)
 
 
 #=============================================

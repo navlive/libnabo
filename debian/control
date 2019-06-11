@@ -8,7 +8,7 @@ Homepage: https://github.com/ethz-asl/libnabo
 Vcs-Git: git://github.com/ethz-asl/libnabo.git
 Vcs-Browser: https://github.com/ethz-asl/libnabo
 
-Package: libnabo-dev
+Package: libnabo
 Section: libdevel
 Architecture: any
 Depends: libnabo1 (= ${binary:Version}), libeigen3-dev
