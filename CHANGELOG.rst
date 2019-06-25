@@ -70,7 +70,7 @@ Changelog for package libnabo
 ------------------
 * Prevent requesting more points than available in the cloud, prevent the use of empty clouds, bumped version number.
 * Added test for grep.
-* Worked around issue `#3 <https://github.com/ethz-asl/libnabo/issues/3>`_ on Windows.
+* Worked around issue `#3 <https://github.com/anybotics/libnabo/issues/3>`_ on Windows.
 * Updated documentation.
 * Contributors: Stéphane Magnenat
 
@@ -108,7 +108,7 @@ Changelog for package libnabo
 * When number of point is smaller than bucket size, create a single-bucket tree.
 * Cleaned-up makefile.
 * Fixed description.
-* Merge branch 'master' of github.com:ethz-asl/libnabo
+* Merge branch 'master' of github.com:anybotics/libnabo
 * Added dbg package.
 * Contributors: Stéphane Magnenat
 

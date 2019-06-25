@@ -1,6 +1,6 @@
 Format: http://dep.debian.net/deps/dep5
 Upstream-Name: libnabo
-Source: https://github.com/ethz-asl/libnabo
+Source: https://github.com/anybotics/libnabo
 
 Files: *
 Copyright: 2010--2011, Stephane Magnenat, ASL, ETHZ, Switzerland <stephane at magnenat dot net>

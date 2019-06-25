@@ -43,7 +43,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <map>
 #include "third_party/any.hpp"
 
-/*! 
+/*!
 	\file nabo.h
 	\brief public interface
 	\ingroup public
@@ -52,7 +52,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*!
 \mainpage libnabo
 
-from http://github.com/ethz-asl/libnabo by Stéphane Magnenat (http://stephane.magnenat.net),
+from http://github.com/anybotics/libnabo by Stéphane Magnenat (http://stephane.magnenat.net),
 ASL-ETHZ, Switzerland (http://www.asl.ethz.ch)
 
 libnabo is a fast K Nearest Neighbour library for low-dimensional spaces.
@@ -135,7 +135,7 @@ Just type:
 \code
 make test
 \endcode
-   
+
 ...in the build directory to run the tests.
 Their outputs are available in the \c Testing directory.
 These consist of validation and benchmarking tests.
@@ -159,7 +159,7 @@ If you use libnabo in the academic context, please cite this paper that evaluate
 
 \section BugReporting Bug reporting
 
-Please use <a href="http://github.com/ethz-asl/libnabo/issues">github's issue tracker</a> to report bugs.
+Please use <a href="http://github.com/anybotics/libnabo/issues">github's issue tracker</a> to report bugs.
 
 \section License
 
@@ -191,7 +191,7 @@ libnabo differs from \ref ANN on the following points:
 
 * performances
 - about 5% to 20% faster than ANN (both -O3 -NDEBUG), probably due to the smaller memory footprint
-- clearly memory-bound, neither OpenMP nor std::thread improve performances 
+- clearly memory-bound, neither OpenMP nor std::thread improve performances
 
 \section References
 
@@ -204,9 +204,9 @@ libnabo differs from \ref ANN on the following points:
 //! Namespace for Nabo
 namespace Nabo
 {
-	//! \defgroup public public interface 
+	//! \defgroup public public interface
 	//@{
-	
+
 	//! version of the Nabo library as string
 	#define NABO_VERSION "1.0.7"
 	//! version of the Nabo library as an int
@@ -252,13 +252,13 @@ namespace Nabo
 				return defaultValue;
 		}
 	};
-	
+
 	//! Nearest neighbour search interface, templatized on scalar type
 	template<typename T, typename Cloud_T = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >
 	struct NearestNeighbourSearch
 	{
 		//! an Eigen vector of type T, to hold the coordinates of a point
-		typedef typename Eigen::Matrix<T, Eigen::Dynamic, 1> Vector; 
+		typedef typename Eigen::Matrix<T, Eigen::Dynamic, 1> Vector;
 		//! a column-major Eigen matrix in which each column is a point; this matrix has dim rows
 		typedef typename Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Matrix;
 		//! a column-major Eigen matrix in which each column is a point; this matrix has dim rows
@@ -269,7 +269,7 @@ namespace Nabo
 		typedef typename Eigen::Matrix<Index, Eigen::Dynamic, 1> IndexVector;
 		//! a matrix of indices to data points
 		typedef typename Eigen::Matrix<Index, Eigen::Dynamic, Eigen::Dynamic> IndexMatrix;
-		
+
 		//! the reference to the data-point cloud, which must remain valid during the lifetime of the NearestNeighbourSearch object
 		const CloudType& cloud;
 		//! the dimensionality of the data-point cloud
@@ -297,20 +297,20 @@ namespace Nabo
 			BRUTE_FORCE_CL, //!< brute-force using openCL, only available if OpenCL enabled, UNSTABLE API
 			SEARCH_TYPE_COUNT //!< number of search types
 		};
-		
+
 		//! creation option
 		enum CreationOptionFlags
 		{
 			TOUCH_STATISTICS = 1 //!< perform statistics on the number of points touched
 		};
-		
+
 		//! search option
 		enum SearchOptionFlags
 		{
 			ALLOW_SELF_MATCH = 1, //!< allows the return of the same point as the query, if this point is in the data cloud; forbidden by default
 			SORT_RESULTS = 2 //!< sort points by distances, when k > 1; do not sort by default
 		};
-		
+
 		//! Find the k nearest neighbours of query
 		/*!	If the search finds less than k points, the empty entries in dists2 will be filled with InvalidValue and the indices with InvalidIndex. If you must query more than one point at once, use the version of the knn() function taking matrices as input, because it is much faster.
 		 *	\param query query point
@@ -323,12 +323,12 @@ namespace Nabo
 		 *	\return if creationOptionFlags contains TOUCH_STATISTICS, return the number of point touched, otherwise return 0
 		 */
 		unsigned long knn(const Vector& query, IndexVector& indices, Vector& dists2, const Index k = 1, const T epsilon = 0, const unsigned optionFlags = 0, const T maxRadius = std::numeric_limits<T>::infinity()) const;
-		
+
 		//! Find the k nearest neighbours for each point of query
 		/*!	If the search finds less than k points, the empty entries in dists2 will be filled with InvalidValue and the indices with InvalidIndex.
 		 *	\param query query points
 		 *	\param indices indices of nearest neighbours, must be of size k x query.cols()
-		 *	\param dists2 squared distances to nearest neighbours, must be of size k x query.cols() 
+		 *	\param dists2 squared distances to nearest neighbours, must be of size k x query.cols()
 		 *	\param k number of nearest neighbour requested
 		 *	\param epsilon maximal ratio of error for approximate search, 0 for exact search; has no effect if the number of neighbour found is smaller than the number requested
 		 *	\param optionFlags search options, a bitwise OR of elements of SearchOptionFlags
@@ -336,12 +336,12 @@ namespace Nabo
 		 *	\return if creationOptionFlags contains TOUCH_STATISTICS, return the number of point touched, otherwise return 0
 		 */
 		virtual unsigned long knn(const Matrix& query, IndexMatrix& indices, Matrix& dists2, const Index k = 1, const T epsilon = 0, const unsigned optionFlags = 0, const T maxRadius = std::numeric_limits<T>::infinity()) const = 0;
-		
+
 		//! Find the k nearest neighbours for each point of query
 		/*!	If the search finds less than k points, the empty entries in dists2 will be filled with InvalidValue and the indices with InvalidIndex.
 		 *	\param query query points
 		 *	\param indices indices of nearest neighbours, must be of size k x query.cols()
-		 *	\param dists2 squared distances to nearest neighbours, must be of size k x query.cols() 
+		 *	\param dists2 squared distances to nearest neighbours, must be of size k x query.cols()
 		 *	\param maxRadii vector of maximum radii in which to search, used to prune search, is not affected by epsilon
 		 *	\param k number of nearest neighbour requested
 		 *	\param epsilon maximal ratio of error for approximate search, 0 for exact search; has no effect if the number of neighbour found is smaller than the number requested
@@ -349,7 +349,7 @@ namespace Nabo
 		 *	\return if creationOptionFlags contains TOUCH_STATISTICS, return the number of point touched, otherwise return 0
 		 */
 		virtual unsigned long knn(const Matrix& query, IndexMatrix& indices, Matrix& dists2, const Vector& maxRadii, const Index k = 1, const T epsilon = 0, const unsigned optionFlags = 0) const = 0;
-		
+
 		//! Create a nearest-neighbour search
 		/*!	\param cloud data-point cloud in which to search
 		 *	\param dim number of dimensions to consider, must be lower or equal to cloud.rows()
@@ -358,7 +358,7 @@ namespace Nabo
 		 *	\param additionalParameters additional parameters, currently only useful for KDTREE_
 		 *	\return an object on which to run nearest neighbour queries */
 		static NearestNeighbourSearch* create(const CloudType& cloud, const Index dim = std::numeric_limits<Index>::max(), const SearchType preferedType = KDTREE_LINEAR_HEAP, const unsigned creationOptionFlags = 0, const Parameters& additionalParameters = Parameters());
-		
+
 		//! Create a nearest-neighbour search, using brute-force search, useful for comparison only
 		/*!	This is an helper function, you can also use create() with BRUTE_FORCE as preferedType
 		 *	\param cloud data-point cloud in which to search
@@ -366,7 +366,7 @@ namespace Nabo
 		 *	\param creationOptionFlags creation options, a bitwise OR of elements of CreationOptionFlags
 		 *	\return an object on which to run nearest neighbour queries */
 		static NearestNeighbourSearch* createBruteForce(const CloudType& cloud, const Index dim = std::numeric_limits<Index>::max(), const unsigned creationOptionFlags = 0);
-		
+
 		//! Create a nearest-neighbour search, using a kd-tree with linear heap, good for small k (~up to 30)
 		/*!	This is an helper function, you can also use create() with KDTREE_LINEAR_HEAP as preferedType
 		 *	\param cloud data-point cloud in which to search
@@ -375,7 +375,7 @@ namespace Nabo
 		 *	\param additionalParameters additional parameters
 		 * 	\return an object on which to run nearest neighbour queries */
 		static NearestNeighbourSearch* createKDTreeLinearHeap(const CloudType& cloud, const Index dim = std::numeric_limits<Index>::max(), const unsigned creationOptionFlags = 0, const Parameters& additionalParameters = Parameters());
-		
+
 		//! Create a nearest-neighbour search, using a kd-tree with tree heap, good for large k (~from 30)
 		/*!	This is an helper function, you can also use create() with KDTREE_TREE_HEAP as preferedType
 		 *	\param cloud data-point cloud in which to search
@@ -384,7 +384,7 @@ namespace Nabo
 		 *	\param additionalParameters additional parameters
 		 * 	\return an object on which to run nearest neighbour queries */
 		static NearestNeighbourSearch* createKDTreeTreeHeap(const CloudType& cloud, const Index dim = std::numeric_limits<Index>::max(), const unsigned creationOptionFlags = 0, const Parameters& additionalParameters = Parameters());
-		
+
 
 
 		//! Prevent creation of trees with the wrong matrix type. Currently only dynamic size matrices are supported.
@@ -425,28 +425,28 @@ namespace Nabo
 
 		//! virtual destructor
 		virtual ~NearestNeighbourSearch() {}
-		
+
 	protected:
 		//! constructor
 		NearestNeighbourSearch(const CloudType& cloud, const Index dim, const unsigned creationOptionFlags);
-		
+
 		//! Make sure that the output matrices have the right sizes. Throw an exception otherwise.
 		/*!	\param query query points
 		 *	\param k number of nearest neighbour requested
 		 *	\param indices indices of nearest neighbours, must be of size k x query.cols()
-		 *	\param dists2 squared distances to nearest neighbours, must be of size k x query.cols() 
+		 *	\param dists2 squared distances to nearest neighbours, must be of size k x query.cols()
 		 *	\param optionFlags the options passed to knn()
 			\param maxRadii if non 0, maximum radii, must be of size k */
 		void checkSizesKnn(const Matrix& query, const IndexMatrix& indices, const Matrix& dists2, const Index k, const unsigned optionFlags, const Vector* maxRadii = 0) const;
 	};
-	
+
 	// Convenience typedefs
-	
+
 	//! nearest neighbour search with scalars of type float
 	typedef NearestNeighbourSearch<float> NNSearchF;
 	//! nearest neighbour search with scalars of type double
 	typedef NearestNeighbourSearch<double> NNSearchD;
-	
+
 	//@}
 }
 

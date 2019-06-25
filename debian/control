@@ -4,9 +4,9 @@ Maintainer: Stéphane Magnenat <stephane@nospam.magnenat.net>
 Build-Depends: debhelper (>= 7.0.50~), cmake, doxygen, cdbs, libboost-python-dev, libeigen3-dev, python-dev, python-numpy
 Standards-Version: 3.9.1
 Section: libs
-Homepage: https://github.com/ethz-asl/libnabo
-Vcs-Git: git://github.com/ethz-asl/libnabo.git
-Vcs-Browser: https://github.com/ethz-asl/libnabo
+Homepage: https://github.com/anybotics/libnabo
+Vcs-Git: git://github.com/anybotics/libnabo.git
+Vcs-Browser: https://github.com/anybotics/libnabo
 
 Package: libnabo
 Section: libdevel
@@ -15,9 +15,9 @@ Depends: libnabo1 (= ${binary:Version}), libeigen3-dev
 Suggests: libnabo-doc
 Description: Development headers of libnabo, a fast K Nearset Neighbor library.
  libnabo is a fast K Nearest Neighbour library for low-dimensional spaces.
- It provides a clean, legacy-free, scalar-type–agnostic API thanks to C++ 
- templates. Its current CPU implementation is strongly inspired by ANN, 
- but with more compact data types. On the average, libnabo is 5% to 20% 
+ It provides a clean, legacy-free, scalar-type–agnostic API thanks to C++
+ templates. Its current CPU implementation is strongly inspired by ANN,
+ but with more compact data types. On the average, libnabo is 5% to 20%
  faster than ANN.
 
 Package: libnabo1-dbg
@@ -26,9 +26,9 @@ Architecture: any
 Depends: libnabo1 (= ${binary:Version})
 Description: Debug symbols for libnabo, a fast K Nearset Neighbor library.
  libnabo is a fast K Nearest Neighbour library for low-dimensional spaces.
- It provides a clean, legacy-free, scalar-type–agnostic API thanks to C++ 
- templates. Its current CPU implementation is strongly inspired by ANN, 
- but with more compact data types. On the average, libnabo is 5% to 20% 
+ It provides a clean, legacy-free, scalar-type–agnostic API thanks to C++
+ templates. Its current CPU implementation is strongly inspired by ANN,
+ but with more compact data types. On the average, libnabo is 5% to 20%
  faster than ANN.
 
 Package: libnabo1
@@ -37,9 +37,9 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Version 1 of libnabo, a fast K Nearset Neighbor library.
  libnabo is a fast K Nearest Neighbour library for low-dimensional spaces.
- It provides a clean, legacy-free, scalar-type–agnostic API thanks to C++ 
- templates. Its current CPU implementation is strongly inspired by ANN, 
- but with more compact data types. On the average, libnabo is 5% to 20% 
+ It provides a clean, legacy-free, scalar-type–agnostic API thanks to C++
+ templates. Its current CPU implementation is strongly inspired by ANN,
+ but with more compact data types. On the average, libnabo is 5% to 20%
  faster than ANN.
 
 Package: libnabo-doc
@@ -47,9 +47,9 @@ Section: doc
 Architecture: all
 Description: API documentation of libnabo, a fast K Nearset Neighbor library.
  libnabo is a fast K Nearest Neighbour library for low-dimensional spaces.
- It provides a clean, legacy-free, scalar-type–agnostic API thanks to C++ 
- templates. Its current CPU implementation is strongly inspired by ANN, 
- but with more compact data types. On the average, libnabo is 5% to 20% 
+ It provides a clean, legacy-free, scalar-type–agnostic API thanks to C++
+ templates. Its current CPU implementation is strongly inspired by ANN,
+ but with more compact data types. On the average, libnabo is 5% to 20%
  faster than ANN.
  This package contains the API documentation for libnabo
 
@@ -59,7 +59,7 @@ Architecture: any
 Depends: libnabo1 (= ${binary:Version}), python, python-numpy
 Description: Python bindings for libnabo, a fast K Nearset Neighbor library.
  libnabo is a fast K Nearest Neighbour library for low-dimensional spaces.
- It provides a clean, legacy-free, scalar-type–agnostic API thanks to C++ 
- templates. Its current CPU implementation is strongly inspired by ANN, 
- but with more compact data types. On the average, libnabo is 5% to 20% 
+ It provides a clean, legacy-free, scalar-type–agnostic API thanks to C++
+ templates. Its current CPU implementation is strongly inspired by ANN,
+ but with more compact data types. On the average, libnabo is 5% to 20%
  faster than ANN.
