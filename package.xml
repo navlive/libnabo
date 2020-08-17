@@ -11,11 +11,12 @@
   <author email="stephane.magnenat@mavt.ethz.ch">Stéphane Magnenat</author>
 
   <!-- If a pure-cmake build is desired, the buildtool should be switched to 'cmake' -->
-  <buildtool_depend>catkin</buildtool_depend>
+  <!-- On the other hand, if a catkin build is desired, the build tool depend should be 'catkin' -->
+  <buildtool_depend>cmake</buildtool_depend>
 
   <build_depend>boost</build_depend>
   <build_depend>eigen</build_depend>
-  <build_depend>libopenmp-dev</build_depend>
+  <build_depend>libomp-dev</build_depend>
 
   <run_depend>boost</run_depend>
   <run_depend>eigen</run_depend>
@@ -26,10 +27,8 @@
 
   <!-- For a pure-cmake build the package must be exported explicitly -->
   <!-- Thus the following block of code must be un-commented -->
-  <!--
   <export>
     <build_type>cmake</build_type>
   </export>
-  -->
 
 </package>

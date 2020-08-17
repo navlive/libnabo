@@ -15,11 +15,11 @@ file(GLOB_RECURSE NABO_HEADERS "nabo/*.h")
 #	* catkin.
 #	* cmake.
 #	* ament (future).
-set(BUILD_TYPE "catkin")
+set(BUILD_TYPE "cmake")
 if (BUILD_TYPE STREQUAL "catkin")
   include(CatkinBuild.cmake)
 else()
   # For a pure-cmake build, follow the instructions on the package.xml file, which
   # specify how to set the buildtool to cmake and export the package accordingly.
-  include(BuildCMakeBuild.cmake)
+  include(PureCMakeBuild.cmake)
 endif()
