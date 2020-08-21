@@ -22,6 +22,7 @@ endif()
 catkin_package(
   INCLUDE_DIRS
     nabo
+    ${CMAKE_SOURCE_DIR}
     ${EIGEN3_INCLUDE_DIR}
   LIBRARIES
     nabo
@@ -40,6 +41,7 @@ add_library(nabo
 
 target_include_directories(nabo
   PUBLIC
+    ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/nabo
   SYSTEM
     ${EIGEN3_INCLUDE_DIR}

@@ -15,7 +15,7 @@ file(GLOB_RECURSE NABO_HEADERS "nabo/*.h")
 #	* catkin.
 #	* cmake.
 #	* ament (future).
-set(BUILD_TYPE "cmake")
+set(BUILD_TYPE "catkin")
 if (BUILD_TYPE STREQUAL "catkin")
   include(CatkinBuild.cmake)
 else()
