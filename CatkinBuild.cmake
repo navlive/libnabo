@@ -77,7 +77,7 @@ install(
 ##########
 if(CATKIN_ENABLE_TESTING)
   catkin_add_gtest(test_nabo
-      tests/test_main.cpp
+      tests/empty_test.cpp
   )
   target_include_directories(test_nabo
     PRIVATE
@@ -88,17 +88,18 @@ if(CATKIN_ENABLE_TESTING)
       ${catkin_INCLUDE_DIRS}
   )
   target_link_libraries(test_nabo
+    gtest_main
     nabo
   )
-endif()
 
-##################
-# Code_coverage ##
-##################
-find_package(cmake_code_coverage QUIET)
-if(cmake_code_coverage_FOUND)
-  add_gtest_coverage(
-    TEST_BUILD_TARGETS
-      test_nabo
-  )
-endif(cmake_code_coverage_FOUND)
+  ##################
+  # Code_coverage ##
+  ##################
+  find_package(cmake_code_coverage QUIET)
+  if(cmake_code_coverage_FOUND)
+    add_gtest_coverage(
+      TEST_BUILD_TARGETS
+        test_nabo
+    )
+  endif()
+endif()
