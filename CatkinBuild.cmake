@@ -12,11 +12,14 @@ find_package(catkin REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED COMPONENTS python)
 
-find_package(OpenMP REQUIRED)
-if (OpenMP_FOUND)
-  add_compile_options("${OpenMP_CXX_FLAGS}")
-  add_definitions(-DHAVE_OPENMP=${OpenMP_FOUND})
-endif()
+set(USE_OPENMP FALSE CACHE BOOL "Set to FALSE to not use OpenMP")
+if(USE_OPENMP)
+  find_package(OpenMP REQUIRED)
+  if (OpenMP_FOUND)
+    add_compile_options("${OpenMP_CXX_FLAGS}")
+    add_definitions(-DHAVE_OPENMP=${OpenMP_FOUND})
+  endif()
+endif(USE_OPENMP)
 
 # Catkin package macro
 catkin_package(
