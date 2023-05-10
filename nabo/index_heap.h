@@ -93,7 +93,7 @@ namespace Nabo
 		inline void reset()
 		{
 			data.clear();
-			data.push_back(Entry(invalidIndex<IT>(), invalidValue<VT>()));
+			data.emplace_back(Entry(invalidIndex<IT>(), invalidValue<VT>()));
 		}
 		
 		//! get the largest value of the heap
@@ -113,7 +113,7 @@ namespace Nabo
 			}
 			else
 			{	// missing neighbours
-				data.push_back(Entry(index, value));
+				data.emplace_back(Entry(index, value));
 			}
 			// ensure heap
 			push_heap(data.begin(), data.end());

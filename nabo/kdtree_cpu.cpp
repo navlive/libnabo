@@ -106,57 +106,86 @@ namespace Nabo
 		return make_pair(minVal, maxVal);
 	}
 	
+	/* This function recursively builds a binary tree where each node represents a split in the k-dimension space.
+		The algorithm selects a split dimension and cut value based on the median of the points in the current node and recursively partitions the points into left and right subtrees.
+		The algorithm stops partitioning when there are fewer points than a specified threshold or when a maximum depth is reached.
+	*/
 	template<typename T, typename Heap, typename CloudType>
-	unsigned KDTreeUnbalancedPtInLeavesImplicitBoundsStackOpt<T, Heap, CloudType>::buildNodes(const BuildPointsIt first, const BuildPointsIt last, const Vector minValues, const Vector maxValues)
+	unsigned KDTreeUnbalancedPtInLeavesImplicitBoundsStackOpt<T, Heap, CloudType>::buildNodes(const BuildPointsIt first, const BuildPointsIt last, Vector minValues, Vector maxValues)
 	{
+		// Calculate the number of points to be partitioned and checking if it's greater than or equal to 1.
 		const int count(last - first);
 		assert(count >= 1);
+
+		// Calculate the current number of nodes and store it in pos.
 		const unsigned pos(nodes.size());
 		
-		//cerr << count << endl;
+		/* Path 1 - All points fit into a single bucket */
+		// If the remaining points fit in a single bucket, add a node and create a bucket to contain the points.
 		if (count <= int(bucketSize))
 		{
 			const uint32_t initBucketsSize(buckets.size());
-			//cerr << "creating bucket with " << count << " values" << endl;
 			for (int i = 0; i < count; ++i)
 			{
+				// We create a bucket to contain the remaining points and add it to the buckets vector.
 				const Index index(*(first+i));
 				assert(index < cloud.cols());
-				buckets.push_back(BucketEntry(&cloud.coeff(0, index), index));
-				//cerr << "  " << &cloud.coeff(0, index) << ", " << index << endl;
+				buckets.emplace_back(BucketEntry(&cloud.coeff(0, index), index));
 			}
-			//cerr << "at address " << bucketStart << endl;
-			nodes.push_back(Node(createDimChildBucketSize(dim, count),initBucketsSize));
+			// Add the node to the nodes vector and return the position of the new node.
+			nodes.emplace_back(Node(createDimChildBucketSize(dim, count),initBucketsSize));
 			return pos;
 		}
 		
-		// find the largest dimension of the box
+		/* Path 2 - Not all points fit into a single bucket, the dataset must be split into two groups / tree branches: left and right */
+		// Find the dimension of the bounding box with the largest spread
 		const unsigned cutDim = argMax<T, CloudType>(maxValues - minValues);
+		// Compute an ideal cut value as the midpoint between the maximum and minimum values of the dimension
 		const T idealCutVal((maxValues(cutDim) + minValues(cutDim))/2);
 		
-		// get bounds from actual points
+		// Compute bounds from actual points
 		const pair<T,T> minMaxVals(getBounds(first, last, cutDim));
 		
-		// correct cut following bounds
+		// Check if the ideal cut value falls within the bounds of the actual points, 
+		// If not, we set the cut value to the midpoint of the bounds.
 		T cutVal;
 		if (idealCutVal < minMaxVals.first)
+		{
 			cutVal = minMaxVals.first;
+		}
 		else if (idealCutVal > minMaxVals.second)
+		{
 			cutVal = minMaxVals.second;
+		}
 		else
+		{
 			cutVal = idealCutVal;
+		}
 		
+		// Partition the points around the cut value. 
+		// The two while loops here partition the points such that 
+		// 	* Points with values less than the cut value are on the left,
+		// 	* Points with values greater than the cut value are on the right, and
+		// 	* Points with values equal to the cut value are in the middle.
+		// The variables br1 and br2 are used to keep track of the indices of the middle points.
 		int l(0);
 		int r(count-1);
-		// partition points around cutVal
 		while (1)
 		{
 			while (l < count && cloud.coeff(cutDim, *(first+l)) < cutVal)
+			{
 				++l;
+			}
 			while (r >= 0 && cloud.coeff(cutDim, *(first+r)) >= cutVal)
+			{
 				--r;
+			}
+
 			if (l > r)
+			{
 				break;
+			}
+
 			swap(*(first+l), *(first+r));
 			++l; --r;
 		}
@@ -166,61 +195,81 @@ namespace Nabo
 		while (1)
 		{
 			while (l < count && cloud.coeff(cutDim, *(first+l)) <= cutVal)
+			{
 				++l;
+			}
 			while (r >= br1 && cloud.coeff(cutDim, *(first+r)) > cutVal)
+			{
 				--r;
+			}
+
 			if (l > r)
+			{
 				break;
+			}
+
 			swap(*(first+l), *(first+r));
 			++l; --r;
 		}
 		const int br2 = l; // now: points[br1..br2-1] == cutVal < points[br2..count-1]
+		// Note: A more descriptive name for the variables br1 and br2 could be 'leftEnd' and 'rightStart', respectively.
+		//  - br1 represents the index of the last point on the left side of the partition, 
+		//  - br2 represents the index of the first point on the right side of the partition.
 		
-		// find best split index
+		// Find the best index to split the points.
+		// If the ideal cut value is less than the minimum value of the partitioned points or greater than the maximum value of the partitioned points.
+		//   --> The best index is either the first point or the last point, respectively. 
+		// If the ideal cut value is within the bounds of the partitioned points, 
+		//   --> Check which partition has more points and selects the index of the last point in the smaller partition as the best index.
 		int leftCount;
 		if (idealCutVal < minMaxVals.first)
-			leftCount = 1;
-		else if (idealCutVal > minMaxVals.second)
-			leftCount = count-1;
-		else if (br1 > count / 2)
-			leftCount = br1;
-		else if (br2 < count / 2)
-			leftCount = br2;
-		else
-			leftCount = count / 2;
-		assert(leftCount > 0);
-		/*if (leftCount >= count)
 		{
-			cerr << "Error found in kdtree:" << endl;
-			cerr << "cloud size: " << cloud.cols() << endl;
-			cerr << "count:" << count << endl;
-			cerr << "leftCount: " << leftCount << endl;
-			cerr << "br1: " << br1 << endl;
-			cerr << "br2: " << br2 << endl;
-			cerr << "idealCutVal: " << idealCutVal << endl;
-			cerr << "cutVal: " << cutVal << endl;
-			cerr << "minMaxVals.first: " << minMaxVals.first << endl;
-			cerr << "minMaxVals.second: " << minMaxVals.second << endl;
-		}*/
+			// Best index = First point of the dataset.
+			leftCount = 1;
+		}
+		else if (idealCutVal > minMaxVals.second)
+		{
+			// Best index = Last point of the dataset.
+			leftCount = count-1;
+		}
+		else if (br1 > count / 2)
+		{
+			// Best index = Last point in the left split.
+			leftCount = br1;
+		}
+		else if (br2 < count / 2)
+		{
+			// Best index = First point in the right split.
+			leftCount = br2;
+		}
+		else
+		{
+			// Best index = Half-way through the dataset.
+			leftCount = count / 2;
+		}
+		assert(leftCount > 0);
 		assert(leftCount < count);
 		
-		// update bounds for left
+		// Update the bounds for the left and right partitions.
+		// --> Left
 		Vector leftMaxValues(maxValues);
 		leftMaxValues[cutDim] = cutVal;
-		// update bounds for right
+		// --> Right
 		Vector rightMinValues(minValues);
 		rightMinValues[cutDim] = cutVal;
 		
-		// add this
-		nodes.push_back(Node(0, cutVal));
+		// Add a new Node to the tree with the split dimension and cut value.
+		nodes.emplace_back(Node(0, cutVal));
 		
-		// recurse
-		const unsigned _UNUSED leftChild = buildNodes(first, first + leftCount, minValues, leftMaxValues);
+		// Recurse on the left and right partitions.
+		const unsigned _UNUSED leftChild = buildNodes(first, first + leftCount, std::move(minValues), std::move(leftMaxValues));
 		assert(leftChild == pos + 1);
-		const unsigned rightChild = buildNodes(first + leftCount, last, rightMinValues, maxValues);
+		const unsigned rightChild = buildNodes(first + leftCount, last, std::move(rightMinValues), std::move(maxValues));
 		
+		// Return the index of the newly added Node.
 		// write right child index and return
 		nodes[pos].dimChildBucketSize = createDimChildBucketSize(cutDim, rightChild);
+
 		return pos;
 	}
 
@@ -237,8 +286,10 @@ namespace Nabo
 		{
 			// make a single-bucket tree
 			for (int i = 0; i < cloud.cols(); ++i)
-				buckets.push_back(BucketEntry(&cloud.coeff(0, i), i));
-			nodes.push_back(Node(createDimChildBucketSize(this->dim, cloud.cols()),uint32_t(0)));
+			{
+				buckets.emplace_back(BucketEntry(&cloud.coeff(0, i), i));
+			}
+			nodes.emplace_back(Node(createDimChildBucketSize(this->dim, cloud.cols()),uint32_t(0)));
 			return;
 		}
 		
@@ -255,8 +306,9 @@ namespace Nabo
 		buildPoints.reserve(cloud.cols());
 		for (int i = 0; i < cloud.cols(); ++i)
 		{
-			const Vector& v(cloud.block(0,i,this->dim,1));
-			buildPoints.push_back(i);
+			// We extract a block instead of a Vector& to prevent the creation of temporaries.
+			const Eigen::Block<const CloudType> v(cloud.block(0,i,this->dim,1));
+			buildPoints.emplace_back(i);
 #ifdef EIGEN3_API
 			const_cast<Vector&>(minBound) = minBound.array().min(v.array());
 			const_cast<Vector&>(maxBound) = maxBound.array().max(v.array());

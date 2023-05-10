@@ -52,7 +52,7 @@ namespace Nabo
 		// compute bounds
 		for (int i = 0; i < cloud.cols(); ++i)
 		{
-			const Vector& v(cloud.block(0,i,this->dim,1));
+			const Eigen::Block<CloudType> v(cloud.block(0,i,this->dim,1));
 			const_cast<Vector&>(this->minBound) = this->minBound.cwise().min(v);
 			const_cast<Vector&>(this->maxBound) = this->maxBound.cwise().max(v);
 		}
@@ -82,7 +82,7 @@ namespace Nabo
 		{
 			const T maxRadius(maxRadii[c]);
 			const T maxRadius2(maxRadius * maxRadius);
-			const Vector& q(query.block(0,c,dim,1));
+			const Eigen::Block<const Matrix> q(query.block(0,c,dim,1));
 			heap.reset();
 			for (int i = 0; i < this->cloud.cols(); ++i)
 			{
