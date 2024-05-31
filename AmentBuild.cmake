@@ -2,6 +2,8 @@
 set(CMAKE_CXX_STANDARD 17)
 add_compile_options(-Wall -Wextra -Wpedantic -Werror=return-type)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
   add_definitions(-O3)
@@ -37,13 +39,12 @@ include_directories(
 )
 
 # Nabo
-add_library(nabo
+add_library(nabo STATIC
   ${NABO_SRC}
   ${NABO_HEADERS}
 )
 
 target_link_libraries(nabo
-  ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
   ${OpenMP_CXX_LIBRARIES}
 )
@@ -96,9 +97,6 @@ if(cmake_clang_tools_FOUND)
     DISABLE_CLANG_FORMAT
   )
 endif(cmake_clang_tools_FOUND)
-
-
-
 
 ament_export_include_directories(${CMAKE_SOURCE_DIR} ${EIGEN3_INCLUDE_DIR})
 ament_export_libraries(nabo)
